@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Immediate Daily Action Plan</title>
+    <style>
+        :root {
+            --primary-color: #8a1538; 
+            --secondary-color: #333;
+            --bg-color: #f4f4f9;
+            --line-color: #ccc;
+            --highlight: #fff3cd;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            color: var(--secondary-color);
+        }
+
+        .container {
+            max-width: 850px;
+            background: #fff;
+            margin: 0 auto;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-top: 6px solid var(--primary-color);
+            position: relative;
+        }
+
+        /* --- Header Section --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+        }
+
+        .logo-container img {
+            height: 60px; /* Keeps logos tidy and resized automatically */
+            width: auto;
+            object-fit: contain;
+        }
+
+        .title-block {
+            text-align: center;
+            flex-grow: 1;
+            padding: 0 20px;
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+
+        .sub-title {
+            margin: 5px 0 0 0;
+            font-weight: bold;
+            color: #d9534f;
+        }
+
+        /* --- Status Bar --- */
+        #status-bar {
+            text-align: right;
+            font-size: 12px;
+            color: #28a745;
+            height: 20px;
+            margin-bottom: 5px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        /* --- Metadata Section --- */
+        .meta-section {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        select,
+        textarea {
+            padding: 10px;
+            border: 1px solid var(--line-color);
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        /* --- Task Table --- */
+        .task-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 8px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+
+        /* Column Widths */
+        .col-check { width: 50px; text-align: center; }
+        .col-prio { width: 100px; }
+        .col-time { width: 110px; }
+        .col-task { width: auto; }
+
+        .task-table input[type="checkbox"] { transform: scale(1.5); cursor: pointer; }
+        .task-table select, .task-table input[type="text"] { width: 100%; padding: 8px; box-sizing: border-box; }
+        .task-input-full { font-weight: 500; }
+
+        /* --- Notes & Buttons --- */
+        .notes-section textarea {
+            width: 100%;
+            height: 100px;
+            resize: vertical;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px;
+            border: none;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.2s;
+            text-align: center;
+        }
+
+        /* Button Colors */
+        .new-day-btn { background-color: #e2e6ea; color: #333; }
+        .new-day-btn:hover { background-color: #cbd3da; }
+
+        .copy-btn { background-color: #17a2b8; color: white; }
+        .copy-btn:hover { background-color: #138496; }
+
+        .email-btn { background-color: #ea4335; color: white; } /* Gmail Red */
+        .email-btn:hover { background-color: #c5221f; }
+
+        .save-btn { background-color: var(--secondary-color); color: white; }
+        .save-btn:hover { background-color: var(--primary-color); }
+
+        @media print {
+            body { background-color: #fff; padding: 0; }
+            .container { box-shadow: none; margin: 0; padding: 20px 0; border-top: none; max-width: 100%; }
+            .button-group, #status-bar { display: none; }
+            input::placeholder, textarea::placeholder { color: transparent; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="https://upload.wikimedia.org/wikipedia/de/c/ce/École_Polytechnique_de_Montréal_Wordmark.svg" alt="École Polytechnique de Montréal Logo">
+            </div>
+            <div class="title-block">
+                <h1>Daily Action Plan</h1>
+                <p class="sub-title">IMMEDIATE PRIORITY TASKS</p>
+            </div>
+            <div class="logo-container">
+                <img src="https://miamioh.edu/miami-brand/_files/images/system/logo-usage/minimum-size/primary-horizontal-stack-min-size.png" alt="Miami University Logo">
+            </div>
+        </header>
+
+        <div id="status-bar">✓ Auto-saved</div>
+
+        <section class="meta-section">
+            <div class="field-group">
+                <label for="date">Date:</label>
+                <input type="date" id="date" class="auto-save">
+            </div>
+            <div class="field-group">
+                <label for="start-time">Start Time:</label>
+                <input type="time" id="start-time" class="auto-save">
+            </div>
+            <div class="field-group">
+                <label for="goal">Primary Objective for Today:</label>
+                <input type="text" id="goal" class="auto-save" placeholder="Enter main goal...">
+            </div>
+        </section>
+
+        <table class="task-table">
+            <thead>
+                <tr>
+                    <th class="col-check">Done</th>
+                    <th class="col-prio">Priority</th>
+                    <th class="col-time">Est. Time</th>
+                    <th class="col-task">Task Description (Critical Items Only)</th>
+                </tr>
+            </thead>
+            <tbody id="taskBody">
+                </tbody>
+        </table>
+
+        <section class="notes-section">
+            <label for="notes">Notes, Blockers, or Next Steps:</label>
+            <textarea id="notes" class="auto-save" placeholder="Record important details..."></textarea>
+        </section>
+
+        <div class="button-group">
+            <button id="newDayBtn" class="btn new-day-btn" title="Clears the form">↻ New Day</button>
+            <button id="copyBtn" class="btn copy-btn" title="Copy text summary to clipboard">📋 Copy Summary</button>
+            <button id="emailBtn" class="btn email-btn" title="Open Gmail in new tab">✉ Open in Gmail</button>
+            <button id="saveBtn" class="btn save-btn" title="Save JSON for Archive">💾 Download Archive</button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- 1. CONFIGURATION & INIT ---
+        const ROW_COUNT = 8;
+        const STORAGE_KEY = 'dailyPlannerData_v1';
+        const taskBody = document.getElementById('taskBody');
+        const statusBar = document.getElementById('status-bar');
+
+        // --- 2. GENERATE TABLE ROWS ---
+        function renderRows() {
+            let html = '';
+            for(let i = 0; i < ROW_COUNT; i++) {
+                html += `
+                <tr class="task-row">
+                    <td class="col-check"><input type="checkbox" class="task-done auto-save"></td>
+                    <td>
+                        <select class="task-prio auto-save">
+                            <option value="High" ${i < 2 ? 'selected' : ''}>High</option>
+                            <option value="Medium" ${i >= 2 && i < 5 ? 'selected' : ''}>Medium</option>
+                            <option value="Low" ${i >= 5 ? 'selected' : ''}>Low</option>
+                        </select>
+                    </td>
+                    <td><input type="text" class="task-time auto-save" placeholder="${i===0 ? 'e.g. 30m' : ''}"></td>
+                    <td><input type="text" class="task-desc task-input-full auto-save" placeholder=""></td>
+                </tr>`;
+            }
+            taskBody.innerHTML = html;
+        }
+        renderRows();
+
+        // --- 3. AUTO-SAVE LOGIC ---
+        function getFormData() {
+            const tasks = [];
+            document.querySelectorAll('.task-row').forEach(row => {
+                tasks.push({
+                    done: row.querySelector('.task-done').checked,
+                    prio: row.querySelector('.task-prio').value,
+                    time: row.querySelector('.task-time').value,
+                    desc: row.querySelector('.task-desc').value
+                });
+            });
+            return {
+                date: document.getElementById('date').value,
+                startTime: document.getElementById('start-time').value,
+                goal: document.getElementById('goal').value,
+                notes: document.getElementById('notes').value,
+                tasks: tasks
+            };
+        }
+
+        function saveToMemory() {
+            const data = getFormData();
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            statusBar.style.opacity = '1';
+            setTimeout(() => { statusBar.style.opacity = '0'; }, 1500);
+        }
+
+        function loadFromMemory() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (!stored) {
+                document.getElementById('date').valueAsDate = new Date();
+                return;
+            }
+            const data = JSON.parse(stored);
+            document.getElementById('date').value = data.date || '';
+            document.getElementById('start-time').value = data.startTime || '';
+            document.getElementById('goal').value = data.goal || '';
+            document.getElementById('notes').value = data.notes || '';
+
+            const rows = document.querySelectorAll('.task-row');
+            if (data.tasks && data.tasks.length > 0) {
+                rows.forEach((row, index) => {
+                    if (data.tasks[index]) {
+                        row.querySelector('.task-done').checked = data.tasks[index].done;
+                        row.querySelector('.task-prio').value = data.tasks[index].prio;
+                        row.querySelector('.task-time').value = data.tasks[index].time;
+                        row.querySelector('.task-desc').value = data.tasks[index].desc;
+                    }
+                });
+            }
+        }
+
+        function attachListeners() {
+            const inputs = document.querySelectorAll('.auto-save');
+            inputs.forEach(input => {
+                input.addEventListener('input', saveToMemory);
+                input.addEventListener('change', saveToMemory);
+            });
+        }
+
+        // --- 4. EXPORT HELPERS ---
+        function generateTextSummary() {
+            const data = getFormData();
+            const cleanTasks = data.tasks.filter(t => t.desc.trim() !== "");
+            
+            let text = `DAILY PLAN: ${data.date}\n`;
+            text += `Goal: ${data.goal}\n`;
+            text += `--------------------------------\n`;
+            
+            cleanTasks.forEach(t => {
+                const check = t.done ? "[X]" : "[ ]";
+                const timeStr = t.time ? `(${t.time})` : "";
+                text += `${check} ${t.prio} - ${t.desc} ${timeStr}\n`;
+            });
+            
+            if(data.notes.trim() !== "") {
+                text += `--------------------------------\n`;
+                text += `NOTES:\n${data.notes}\n`;
+            }
+            
+            return text;
+        }
+
+        // Robust Copy Function
+        function copyToClipboard(text) {
+             if (navigator.clipboard && navigator.clipboard.writeText) {
+                 return navigator.clipboard.writeText(text);
+             }
+             return new Promise((resolve, reject) => {
+                 try {
+                     const textArea = document.createElement("textarea");
+                     textArea.value = text;
+                     textArea.style.position = "fixed"; 
+                     document.body.appendChild(textArea);
+                     textArea.focus();
+                     textArea.select();
+                     document.execCommand('copy');
+                     document.body.removeChild(textArea);
+                     resolve();
+                 } catch (err) {
+                     reject(err);
+                 }
+             });
+        }
+
+        // --- 5. BUTTON ACTIONS ---
+
+        // A. Start New Day
+        document.getElementById('newDayBtn').addEventListener('click', function() {
+            if(confirm('Are you sure? This clears the form for a new day.')) {
+                localStorage.removeItem(STORAGE_KEY);
+                location.reload();
+            }
+        });
+
+        // B. Copy Summary to Clipboard
+        document.getElementById('copyBtn').addEventListener('click', function() {
+            const text = generateTextSummary();
+            copyToClipboard(text).then(() => {
+                const btn = document.getElementById('copyBtn');
+                const originalText = btn.innerText;
+                btn.innerText = "✓ Copied!";
+                btn.style.backgroundColor = "#28a745";
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.backgroundColor = ""; 
+                }, 2000);
+            });
+        });
+
+        // C. Email Report (Gmail)
+        document.getElementById('emailBtn').addEventListener('click', function() {
+            const text = generateTextSummary();
+            const date = document.getElementById('date').value;
+            const subject = encodeURIComponent(`Daily Status Report - ${date}`);
+            const body = encodeURIComponent(text);
+            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}`;
+            window.open(gmailUrl, '_blank');
+        });
+
+        // D. Download JSON with Smart Path Copy (NO ALERT BOX)
+        document.getElementById('saveBtn').addEventListener('click', function() {
+            const rawData = getFormData();
+            const cleanTasks = rawData.tasks.filter(t => t.desc.trim() !== "");
+            
+            const exportData = {
+                date: rawData.date || 'No Date',
+                startTime: rawData.startTime,
+                goal: rawData.goal,
+                tasks: cleanTasks.map(t => ({
+                    done: t.done,
+                    priority: t.prio,
+                    time: t.time,
+                    description: t.desc
+                })),
+                notes: rawData.notes
+            };
+
+            const jsonString = JSON.stringify(exportData, null, 2);
+            const blob = new Blob([jsonString], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            
+            // 1. Generate Filename
+            const dateStr = exportData.date.replace(/-/g, '');
+            const now = new Date();
+            const timeStr = now.getHours().toString().padStart(2, '0') + now.getMinutes().toString().padStart(2, '0');
+            const fileName = `daily-plan-${dateStr}-${timeStr}.json`;
+            
+            // 2. Generate Full Smart Path
+            const smartPath = `h:\\My Drive\\DailyPlans\\${fileName}`;
+
+            // 3. Copy to Clipboard THEN Download
+            // We do NOT show an alert. We just change the button text.
+            copyToClipboard(smartPath).then(() => {
+                const btn = document.getElementById('saveBtn');
+                const originalText = btn.innerText;
+                btn.innerText = "PATH COPIED! PASTE NOW";
+                btn.style.backgroundColor = "#28a745"; // Green
+                
+                // Trigger download
+                a.download = fileName;
+                a.href = url;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                // Reset button after 4 seconds (giving you time to read it)
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.backgroundColor = ""; 
+                }, 4000);
+
+            }).catch(err => {
+                console.error("Clipboard failed", err);
+                // Even if clipboard fails, we MUST download the file
+                a.download = fileName;
+                a.href = url;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        });
+
+        // --- 6. RUN ON LOAD ---
+        loadFromMemory();
+        attachListeners();
+
+    </script>
+
+</body>
+</html>
